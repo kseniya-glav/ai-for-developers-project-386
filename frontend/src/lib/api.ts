@@ -8,7 +8,7 @@ import type {
   ApiError,
 } from "@/types/api";
 
-const BASE_URL = "";
+const BASE_URL = "/api";
 
 async function request<T>(
   path: string,

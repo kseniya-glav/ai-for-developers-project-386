@@ -12,9 +12,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/owner': 'http://localhost:3000',
-      '/event-types': 'http://localhost:3000',
-      '/bookings': 'http://localhost:3000',
+      '/api': {
+        target: 'http://localhost:3000',
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
     },
   },
 })
