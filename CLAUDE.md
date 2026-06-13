@@ -37,7 +37,31 @@ API-контракт — единый источник правды. Файл `m
 | POST | /bookings | Гость | Создать бронирование |
 | GET | /bookings | Владелец | Список предстоящих бронирований |
 
+## Фронтенд
+
+Отдельное SPA в директории `frontend/`. Стек: Vite + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui. Работает с API по контракту, запросы проксируются через Vite на `localhost:3000`.
+
+### Структура
+
+- `src/types/api.ts` — типы по OpenAPI-контракту
+- `src/lib/api.ts` — API-клиент (все 6 эндпоинтов)
+- `src/hooks/useApi.ts` — хук загрузки данных
+- `src/pages/` — страницы (EventTypesPage, BookingsPage, OwnerPage)
+- `src/components/` — диалоги (CreateEventTypeDialog, SlotsDialog, BookingDialog) + Layout
+
+### Маршруты
+
+| Путь | Страница |
+|------|----------|
+| `/` | Типы событий + создание + слоты |
+| `/bookings` | Список бронирований |
+| `/owner` | Профиль владельца |
+
 ## Команды
 
 - `npx tsp compile main.tsp` — скомпилировать TypeSpec → OpenAPI
-- `npm install` — установить зависимости
+- `npm install` — установить зависимости корня
+- `cd frontend && npm install` — установить зависимости фронтенда
+- `cd frontend && npm run dev` — dev-сервер фронтенда (порт 5173)
+- `cd frontend && npm run build` — сборка фронтенда
+- `cd frontend && npm run mock` — Prism-мок API по контракту (порт 3000)
