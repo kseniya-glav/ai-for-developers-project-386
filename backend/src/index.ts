@@ -3,15 +3,23 @@ import cors from "cors";
 import ownerRouter from "./routes/owner.js";
 import eventTypesRouter from "./routes/eventTypes.js";
 import bookingsRouter from "./routes/bookings.js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
-app.use(cors());
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",")
+  : ["http://localhost:5173"];
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 // Serve static frontend files
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.use(ownerRouter);
 app.use(eventTypesRouter);
@@ -19,7 +27,7 @@ app.use(bookingsRouter);
 
 // SPA fallback — serve index.html for any non-API route
 app.use((_req, res) => {
-  res.sendFile(new URL("../public/index.html", import.meta.url).pathname);
+  res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 app.listen(PORT, () => {

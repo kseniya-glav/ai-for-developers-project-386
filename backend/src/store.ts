@@ -35,9 +35,9 @@ export interface Booking {
 // ── In-memory store ──────────────────────────────────────────────────────
 
 const owner: Owner = {
-  id: "owner-1",
-  name: "Алексей Иванов",
-  email: "alexey@example.com",
+  id: process.env.OWNER_ID || "owner-1",
+  name: process.env.OWNER_NAME || "Алексей Иванов",
+  email: process.env.OWNER_EMAIL || "alexey@example.com",
 };
 
 const eventTypes = new Map<string, EventType>();
