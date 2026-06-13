@@ -37,6 +37,25 @@ API-контракт — единый источник правды. Файл `m
 | POST | /bookings | Гость | Создать бронирование |
 | GET | /bookings | Владелец | Список предстоящих бронирований |
 
+## Бэкенд
+
+Отдельный сервер в директории `backend/`. Стек: Node.js + Express + TypeScript. Хранение в памяти (данные сбрасываются при перезапуске).
+
+### Структура
+
+- `src/index.ts` — Express-приложение, CORS, маршруты
+- `src/store.ts` — in-memory хранилище (Owner, EventTypes, Bookings, резервирование слотов)
+- `src/slots.ts` — генерация слотов (14 дней, 09:00–18:00, исключая занятые)
+- `src/validation.ts` — валидация запросов (EventTypeCreate, BookingCreate)
+- `src/routes/` — обработчики маршрутов (owner, eventTypes, bookings)
+
+### Бизнес-правила
+
+- Один слот — одно бронирование, даже если типы событий разные (409 Conflict)
+- Окно бронирования: 14 дней от текущей даты
+- endTime вычисляется сервером: startTime + durationMinutes
+- createdAt генерируется сервером, не принимается от клиента
+
 ## Фронтенд
 
 Отдельное SPA в директории `frontend/`. Стек: Vite + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui. Работает с API по контракту, запросы проксируются через Vite на `localhost:3000`.
@@ -65,3 +84,6 @@ API-контракт — единый источник правды. Файл `m
 - `cd frontend && npm run dev` — dev-сервер фронтенда (порт 5173)
 - `cd frontend && npm run build` — сборка фронтенда
 - `cd frontend && npm run mock` — Prism-мок API по контракту (порт 3000)
+- `cd backend && npm install` — установить зависимости бэкенда
+- `cd backend && npm run dev` — dev-сервер бэкенда (порт 3000)
+- `cd backend && npm run build` — сборка бэкенда
