@@ -5,6 +5,8 @@
 
 Сервис бронирования по типу Cal.com. Owner создаёт типы событий, гости выбирают свободные слоты и бронируют.
 
+**Демо:** https://ai-for-developers-project-386-poy6.onrender.com
+
 ## Запуск через Docker
 
 ```bash
