@@ -121,7 +121,7 @@ export function SlotsDialog({ eventType, open, onOpenChange }: Props) {
           }}
           onBooked={() => {
             setSelectedSlot(null);
-            refetch();
+            onOpenChange(false);
           }}
         />
       )}

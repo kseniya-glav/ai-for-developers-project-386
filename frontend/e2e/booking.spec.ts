@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Основной сценарий бронирования", () => {
+  test.beforeEach(async () => {
+    await fetch("http://localhost:3000/api/_test/reset");
+  });
+
   test("полный флоу: профиль → тип события → слоты → бронирование → список", async ({
     page,
   }) => {
@@ -27,7 +31,7 @@ test.describe("Основной сценарий бронирования", () =
     // 3. Выбор слота и бронирование
     const eventCard = page.locator("div.cursor-pointer", {
       hasText: "Собеседование",
-    });
+    }).first();
     await eventCard.click();
 
     await expect(
@@ -61,7 +65,7 @@ test.describe("Основной сценарий бронирования", () =
     await page.goto("/");
     const cardAgain = page.locator("div.cursor-pointer", {
       hasText: "Собеседование",
-    });
+    }).first();
     await cardAgain.click();
 
     await expect(
@@ -88,7 +92,7 @@ test.describe("Основной сценарий бронирования", () =
     await expect(page.getByText("Встреча")).toBeVisible({ timeout: 15000 });
 
     // Бронируем первый слот
-    const eventCard = page.locator("div.cursor-pointer", { hasText: "Встреча" });
+    const eventCard = page.locator("div.cursor-pointer", { hasText: "Встреча" }).first();
     await eventCard.click();
 
     await expect(
@@ -109,7 +113,7 @@ test.describe("Основной сценарий бронирования", () =
 
     // Проверяем, что забронированный слот больше не отображается
     await page.goto("/");
-    const cardAgain = page.locator("div.cursor-pointer", { hasText: "Встреча" });
+    const cardAgain = page.locator("div.cursor-pointer", { hasText: "Встреча" }).first();
     await cardAgain.click();
 
     await expect(

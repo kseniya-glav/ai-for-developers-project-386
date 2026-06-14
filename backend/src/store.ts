@@ -116,6 +116,12 @@ export function getAllBookings(): Booking[] {
   return bookings;
 }
 
+export function resetStore(): void {
+  eventTypes.clear();
+  bookings.length = 0;
+  reservedKeys.clear();
+}
+
 function overlaps(
   start1: string,
   end1: string,

@@ -3,6 +3,7 @@ import cors from "cors";
 import ownerRouter from "./routes/owner.js";
 import eventTypesRouter from "./routes/eventTypes.js";
 import bookingsRouter from "./routes/bookings.js";
+import { resetStore } from "./store.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -17,6 +18,12 @@ const allowedOrigins = process.env.CORS_ORIGINS
 
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
+
+// Test-only endpoint to reset in-memory store
+app.post("/api/_test/reset", (_req, res) => {
+  resetStore();
+  res.json({ ok: true });
+});
 
 // API routes under /api
 app.use("/api", ownerRouter);
