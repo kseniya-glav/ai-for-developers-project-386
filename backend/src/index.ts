@@ -18,14 +18,15 @@ const allowedOrigins = process.env.CORS_ORIGINS
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
+// API routes under /api
+app.use("/api", ownerRouter);
+app.use("/api", eventTypesRouter);
+app.use("/api", bookingsRouter);
+
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.use(ownerRouter);
-app.use(eventTypesRouter);
-app.use(bookingsRouter);
-
-// SPA fallback — serve index.html for any non-API route
+// SPA fallback — serve index.html for any non-API, non-static route
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });

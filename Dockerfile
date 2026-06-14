@@ -5,7 +5,6 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ .
-ENV VITE_API_BASE_URL=""
 RUN npm run build
 
 # ── Stage 2: Build backend ──────────────────────────────────────────────
