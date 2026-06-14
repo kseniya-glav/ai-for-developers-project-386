@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "compile": "tsp compile main.tsp"
+    "compile": "tsp compile main.tsp",
+    "test:e2e": "playwright test --config=tests/playwright.config.ts"
   },
   "dependencies": {
     "@typespec/compiler": "latest",

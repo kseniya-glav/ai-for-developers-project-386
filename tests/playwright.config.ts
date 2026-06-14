@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./e2e",
+  testDir: ".",
   fullyParallel: false,
   retries: 0,
   timeout: 60000,
@@ -11,12 +11,12 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "cd backend && npm run dev",
+      command: "cd ../backend && npm run dev",
       port: 3000,
       reuseExistingServer: false,
     },
     {
-      command: "cd frontend && npm run dev",
+      command: "cd ../frontend && npm run dev",
       port: 5173,
       reuseExistingServer: false,
     },
