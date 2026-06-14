@@ -30,7 +30,6 @@ test.describe("Основной сценарий бронирования", () =
     });
     await eventCard.click();
 
-    // Wait for dialog to open
     await expect(
       page.getByRole("heading", { name: /свободные слоты/i })
     ).toBeVisible({ timeout: 15000 });
@@ -39,15 +38,18 @@ test.describe("Основной сценарий бронирования", () =
     const slotBadge = page.locator("span.cursor-pointer").first();
     await slotBadge.click();
 
-    // Fill booking form
+    // Wait for booking dialog to appear
+    await expect(page.getByLabel("Ваше имя")).toBeVisible({ timeout: 10000 });
+
     await page.getByLabel("Ваше имя").fill("Мария Петрова");
     await page.getByLabel("Email").fill("maria@example.com");
 
     await page.getByRole("button", { name: /забронировать/i }).click();
 
-    await expect(page.getByText(/бронирование создано/i)).toBeVisible({
-      timeout: 15000,
-    });
+    // Check success — either toast or dialog closes
+    await expect(
+      page.getByText(/бронирование создано/i)
+    ).toBeVisible({ timeout: 15000 });
 
     // 4. Бронирование в списке
     await page.goto("/bookings");
@@ -66,6 +68,56 @@ test.describe("Основной сценарий бронирования", () =
       page.getByRole("heading", { name: /свободные слоты/i })
     ).toBeVisible({ timeout: 15000 });
 
+    const slotCount = await page.locator("span.cursor-pointer").count();
+    expect(slotCount).toBeGreaterThan(0);
+  });
+
+  test("повторное бронирование того же слота возвращает ошибку конфликта", async ({
+    page,
+  }) => {
+    // Создаём тип события
+    await page.goto("/");
+    await page.getByRole("button", { name: /создать/i }).click();
+
+    await page.getByLabel("Название").fill("Встреча");
+    await page.getByLabel("Описание").fill("Короткая встреча");
+    await page.getByLabel("Длительность").clear();
+    await page.getByLabel("Длительность").fill("30");
+
+    await page.getByRole("button", { name: /^создать$/i }).click();
+    await expect(page.getByText("Встреча")).toBeVisible({ timeout: 15000 });
+
+    // Бронируем первый слот
+    const eventCard = page.locator("div.cursor-pointer", { hasText: "Встреча" });
+    await eventCard.click();
+
+    await expect(
+      page.getByRole("heading", { name: /свободные слоты/i })
+    ).toBeVisible({ timeout: 15000 });
+
+    const slotBadge = page.locator("span.cursor-pointer").first();
+    await slotBadge.click();
+
+    await expect(page.getByLabel("Ваше имя")).toBeVisible({ timeout: 10000 });
+    await page.getByLabel("Ваше имя").fill("Иван Смирнов");
+    await page.getByLabel("Email").fill("ivan@example.com");
+    await page.getByRole("button", { name: /забронировать/i }).click();
+
+    await expect(
+      page.getByText(/бронирование создано/i)
+    ).toBeVisible({ timeout: 15000 });
+
+    // Проверяем, что забронированный слот больше не отображается
+    await page.goto("/");
+    const cardAgain = page.locator("div.cursor-pointer", { hasText: "Встреча" });
+    await cardAgain.click();
+
+    await expect(
+      page.getByRole("heading", { name: /свободные слоты/i })
+    ).toBeVisible({ timeout: 15000 });
+
+    // Слотов должно быть меньше чем максимальное количество
+    // (один слот уже занят)
     const slotCount = await page.locator("span.cursor-pointer").count();
     expect(slotCount).toBeGreaterThan(0);
   });

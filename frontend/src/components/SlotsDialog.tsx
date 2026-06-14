@@ -43,86 +43,88 @@ export function SlotsDialog({ eventType, open, onOpenChange }: Props) {
     return groups;
   };
 
+  const handleSlotSelect = (slot: Slot) => {
+    setSelectedSlot(slot);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{eventType.title} — свободные слоты</DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={open && !selectedSlot} onOpenChange={(v) => { if (!v) onOpenChange(false); }}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{eventType.title} — свободные слоты</DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-2">
-          <Label htmlFor="startDate">Начальная дата (необязательно)</Label>
-          <div className="flex gap-2">
-            <Input
-              id="startDate"
-              type="date"
-              value={startDate}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setStartDate(e.target.value)
-              }
-            />
-            <Button variant="outline" size="sm" onClick={refetch}>
-              Обновить
-            </Button>
+          <div className="space-y-2">
+            <Label htmlFor="startDate">Начальная дата (необязательно)</Label>
+            <div className="flex gap-2">
+              <Input
+                id="startDate"
+                type="date"
+                value={startDate}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setStartDate(e.target.value)
+                }
+              />
+              <Button variant="outline" size="sm" onClick={refetch}>
+                Обновить
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <Separator />
+          <Separator />
 
-        {loading && <p className="text-muted-foreground">Загрузка…</p>}
-        {error && <p className="text-destructive">{error}</p>}
+          {loading && <p className="text-muted-foreground">Загрузка…</p>}
+          {error && <p className="text-destructive">{error}</p>}
 
-        {!loading && !error && (
-          <>
-            {slots && slots.length > 0 ? (
-              <div className="space-y-4">
-                {Object.entries(groupByDate(slots)).map(([day, daySlots]) => (
-                  <div key={day}>
-                    <p className="mb-2 text-sm font-medium capitalize text-muted-foreground">
-                      {format(parseISO(day), "EEEE, d MMMM", { locale: ru })}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {daySlots.map((slot) => {
-                        const selected =
-                          selectedSlot?.startTime === slot.startTime;
-                        return (
+          {!loading && !error && (
+            <>
+              {slots && slots.length > 0 ? (
+                <div className="space-y-4">
+                  {Object.entries(groupByDate(slots)).map(([day, daySlots]) => (
+                    <div key={day}>
+                      <p className="mb-2 text-sm font-medium capitalize text-muted-foreground">
+                        {format(parseISO(day), "EEEE, d MMMM", { locale: ru })}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {daySlots.map((slot) => (
                           <Badge
                             key={slot.startTime}
-                            variant={selected ? "default" : "outline"}
+                            variant="outline"
                             className="cursor-pointer px-3 py-1.5 text-sm"
-                            onClick={() => setSelectedSlot(slot)}
+                            onClick={() => handleSlotSelect(slot)}
                           >
                             {format(parseISO(slot.startTime), "HH:mm")}
                           </Badge>
-                        );
-                      })}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">
-                Нет свободных слотов на ближайшие 14 дней
-              </p>
-            )}
-          </>
-        )}
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">
+                  Нет свободных слотов на ближайшие 14 дней
+                </p>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
-        {selectedSlot && (
-          <BookingDialog
-            eventType={eventType}
-            slot={selectedSlot}
-            open={!!selectedSlot}
-            onOpenChange={(open) => {
-              if (!open) setSelectedSlot(null);
-            }}
-            onBooked={() => {
-              setSelectedSlot(null);
-              refetch();
-            }}
-          />
-        )}
-      </DialogContent>
-    </Dialog>
+      {selectedSlot && (
+        <BookingDialog
+          eventType={eventType}
+          slot={selectedSlot}
+          open={!!selectedSlot}
+          onOpenChange={(open) => {
+            if (!open) setSelectedSlot(null);
+          }}
+          onBooked={() => {
+            setSelectedSlot(null);
+            refetch();
+          }}
+        />
+      )}
+    </>
   );
 }

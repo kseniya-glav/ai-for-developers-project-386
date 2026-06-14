@@ -25,11 +25,15 @@ export function generateSlots(
   const slots: Slot[] = [];
   const durationMs = eventType.durationMinutes * 60_000;
 
+  const now = new Date();
+
   const current = new Date(startDay);
   while (current < endDay) {
     for (let hour = WORKING_START; hour < WORKING_END; hour++) {
       const slotStart = new Date(current);
       slotStart.setHours(hour, 0, 0, 0);
+
+      if (slotStart <= now) continue;
 
       const slotEnd = new Date(slotStart.getTime() + durationMs);
 
