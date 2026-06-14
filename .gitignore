@@ -2,3 +2,4 @@ node_modules/
 tsp-output/
 frontend/dist/
 backend/dist/
+test-results/
